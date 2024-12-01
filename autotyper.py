@@ -1,308 +1,238 @@
 import sys
-import json
 import time
-from random import random
-
+import threading
+from random import uniform
 import pyautogui
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,
-    QTableWidget, QTableWidgetItem, QPushButton, QLineEdit, QWidget,
-    QHeaderView, QDialog, QSpinBox, QTextEdit, QRadioButton, QComboBox
+    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QTextEdit,
+    QPushButton, QWidget, QComboBox, QRadioButton, QFileDialog, QShortcut
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
-
-
-class AddNewDialog(QDialog):
-    def __init__(self, data=None):
-        super().__init__()
-        self.setWindowTitle("Add/Edit Record")
-        self.setFixedSize(600, 450)
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #dfe6e9;
-                border-radius: 10px;
-                font-family: 'Arial', sans-serif;
-                font-size: 14px;
-            }
-            QLabel {
-                font-weight: bold;
-                color: #2c3e50;
-            }
-            QLineEdit, QTextEdit, QSpinBox, QComboBox {
-                border: 2px solid #2980b9;
-                border-radius: 5px;
-                padding: 5px;
-                background-color: #ffffff;
-            }
-            QTextEdit {
-                min-height: 80px;
-            }
-            QPushButton {
-                background-color: #2980b9;
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 5px;
-                font-size: 14px;
-                transition: background-color 0.3s ease;
-            }
-            QPushButton:hover {
-                background-color: #3498db;
-            }
-        """)
-
-        layout = QVBoxLayout(self)
-
-        # Shortcut Key Input
-        self.shortcut_key_label = QLabel("Shortcut Key:")
-        self.shortcut_key_input = QLineEdit(self)
-        self.shortcut_key_input.setPlaceholderText("Press keys")
-        self.shortcut_key_input.setReadOnly(True)
-        self.shortcut_key_input.keyPressEvent = self.capture_shortcut_key
-
-        self.clear_button = QPushButton("Clear")
-        self.clear_button.clicked.connect(self.clear_shortcut_key)
-
-        # Arrange Shortcut Key Input and Clear Button side by side
-        shortcut_layout = QHBoxLayout()
-        shortcut_layout.addWidget(self.shortcut_key_input)
-        shortcut_layout.addWidget(self.clear_button)
-
-        # Text Input
-        self.text_input_label = QLabel("Text:")
-        self.text_input = QTextEdit(self)
-
-        # Random Delay Section
-        self.delay_label = QLabel("Random Delay:")
-
-        # Min and Max Delay Inputs
-        self.delay_min_label = QLabel("Min:")
-        self.delay_min = QSpinBox(self)
-        self.delay_min.setRange(0, 5000)
-        self.delay_min.setValue(15)  # Default delay is set to 15 ms
-
-        self.delay_max_label = QLabel("Max:")
-        self.delay_max = QSpinBox(self)
-        self.delay_max.setRange(0, 5000)
-        self.delay_max.setValue(15)  # Default delay max is also 15 ms
-
-        # Speed Unit Option (Milliseconds/Seconds)
-        self.speed_label = QLabel("Speed:")
-        self.speed_combo = QComboBox(self)
-        self.speed_combo.addItems(["ms", "s"])
-
-        # Repeats
-        self.repeats_label = QLabel("How Many Times to Type:")
-        self.repeats_input = QSpinBox(self)
-        self.repeats_input.setRange(1, 100)
-
-        # Arrange Min, Max, Speed Unit, and Repeats side by side
-        delay_layout = QHBoxLayout()
-        delay_layout.addWidget(self.delay_min_label)
-        delay_layout.addWidget(self.delay_min)
-        delay_layout.addWidget(self.delay_max_label)
-        delay_layout.addWidget(self.delay_max)
-        delay_layout.addWidget(self.speed_label)
-        delay_layout.addWidget(self.speed_combo)
-        delay_layout.addWidget(self.repeats_label)
-        delay_layout.addWidget(self.repeats_input)
-
-        # Typing Style
-        self.typing_style_label = QLabel("Typing Style:")
-        self.style_normal = QRadioButton("Type As it Is")
-        self.style_caps = QRadioButton("Type All CAPS")
-        self.style_sentence = QRadioButton("Type Sentence Case")
-        self.style_lower = QRadioButton("Type Lowercase")
-        self.style_normal.setChecked(True)
-
-        # Arrange typing styles side by side
-        typing_style_layout = QHBoxLayout()
-        typing_style_layout.addWidget(self.style_normal)
-        typing_style_layout.addWidget(self.style_caps)
-        typing_style_layout.addWidget(self.style_sentence)
-        typing_style_layout.addWidget(self.style_lower)
-
-        # Buttons
-        self.ok_button = QPushButton("OK")
-        self.ok_button.clicked.connect(self.accept)
-        self.cancel_button = QPushButton("Cancel")
-        self.cancel_button.clicked.connect(self.reject)
-
-        # Add widgets to layout
-        layout.addWidget(self.shortcut_key_label)
-        layout.addLayout(shortcut_layout)
-
-        layout.addWidget(self.text_input_label)
-        layout.addWidget(self.text_input)
-
-        layout.addWidget(self.delay_label)
-        layout.addLayout(delay_layout)
-
-        layout.addWidget(self.typing_style_label)
-        layout.addLayout(typing_style_layout)
-
-        button_layout = QHBoxLayout()
-        button_layout.addWidget(self.ok_button)
-        button_layout.addWidget(self.cancel_button)
-        layout.addLayout(button_layout)
-
-    def capture_shortcut_key(self, event):
-        key = QKeySequence(event.key() | int(event.modifiers()))
-        self.shortcut_key_input.setText(key.toString())
-
-    def clear_shortcut_key(self):
-        self.shortcut_key_input.clear()
+from docx import Document  # To handle Word files
 
 
 class AutoTyperApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Auto Typer")
-        self.setMinimumSize(800, 600)
-        self.setStyleSheet("""
-            QMainWindow {
+        self.setWindowTitle("AutoTyper - Designed by IoT Labs")
+        self.setGeometry(100, 100, 800, 650)
+        self.is_typing = False
+        self.thread = None  # Thread for typing process
+        self.set_ui_style()
+
+        # Main Layout
+        layout = QVBoxLayout()
+
+        # Header
+        header = QLabel("AutoTyper")
+        header.setStyleSheet("color: #2980b9; font-size: 36px; font-weight: bold;")
+        header.setAlignment(Qt.AlignCenter)
+        layout.addWidget(header)
+
+        # Control Buttons
+        button_layout = QHBoxLayout()
+        self.copy_button = self.create_button("Copy", "#3498db")
+        self.paste_button = self.create_button("Paste", "#1abc9c")
+        self.cut_button = self.create_button("Cut", "#e74c3c")
+        self.clear_button = self.create_button("Clear", "#f39c12")
+        self.load_button = self.create_button("Load Text", "#9b59b6")
+
+        # Add Buttons
+        button_layout.addWidget(self.copy_button)
+        button_layout.addWidget(self.paste_button)
+        button_layout.addWidget(self.cut_button)
+        button_layout.addWidget(self.clear_button)
+        button_layout.addWidget(self.load_button)
+        layout.addLayout(button_layout)
+
+        # Text Box
+        self.text_edit = QTextEdit()
+        self.text_edit.setStyleSheet(
+            "font-size: 16px; background-color: #ecf0f1; color: black; border-radius: 10px; padding: 10px;")
+        layout.addWidget(self.text_edit)
+
+        # Typing Options (Speed, Style)
+        typing_options_layout = QHBoxLayout()
+        self.speed_label = QLabel("Typing Speed:")
+        self.speed_label.setStyleSheet("font-size: 16px; color: white;")
+
+        self.speed_dropdown = QComboBox()
+        self.speed_dropdown.addItems(["60 WPM", "100 WPM", "150 WPM"])
+        self.speed_dropdown.setCurrentIndex(0)  # Default to 60 WPM
+        self.speed_dropdown.setStyleSheet(""" 
+            QComboBox {
+                font-size: 14px;
+                background-color: #bdc3c7;
+                color: black;
+                padding: 5px;
+                border-radius: 5px;
+            }
+            QComboBox:hover {
                 background-color: #ecf0f1;
-                font-family: 'Arial', sans-serif;
-                font-size: 14px;
             }
-            QTableWidget {
-                background-color: white;
-                border: 2px solid #3498db;
-                border-radius: 5px;
-            }
-            QPushButton {
-                background-color: #2980b9;
-                color: white;
+            QComboBox::drop-down {
                 border: none;
-                padding: 12px 24px;
-                border-radius: 5px;
-                font-size: 14px;
-                transition: background-color 0.3s ease;
             }
-            QPushButton:hover {
-                background-color: #3498db;
-            }
-            QLabel {
-                font-weight: bold;
-                color: #2c3e50;
-                margin-top: 10px;
-            }
-            QCheckBox {
-                color: #34495e;
+            QComboBox QAbstractItemView {
+                background-color: #ecf0f1;
+                selection-background-color: #2980b9;
+                color: black;
             }
         """)
 
-        # Table to Display Entries
-        self.table = QTableWidget(self)
-        self.table.setColumnCount(5)
-        self.table.setHorizontalHeaderLabels(["Shortcut Key", "Text", "Delay", "Repeats", "Comments"])
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.table.setSelectionBehavior(QTableWidget.SelectRows)
+        typing_options_layout.addWidget(self.speed_label)
+        typing_options_layout.addWidget(self.speed_dropdown)
 
-        # Buttons
-        self.add_button = QPushButton("Add New")
-        self.add_button.clicked.connect(self.show_add_new_dialog)
-        self.edit_button = QPushButton("Edit")
-        self.edit_button.clicked.connect(self.show_edit_dialog)
-        self.delete_button = QPushButton("Delete")
-        self.delete_button.clicked.connect(self.delete_selected_row)
-        self.start_button = QPushButton("Start AutoTyper")
-        self.start_button.clicked.connect(self.start_autotyper)
+        self.style_label = QLabel("Typing Style:")
+        self.style_label.setStyleSheet("font-size: 16px; color: white;")
+        self.style_normal = QRadioButton("Normal")
+        self.style_caps = QRadioButton("Uppercase")
+        self.style_lower = QRadioButton("Lowercase")
+        self.style_sentence = QRadioButton("Sentence Case")
+        self.style_normal.setChecked(True)
 
-        # Layout for Buttons
-        button_layout = QHBoxLayout()
-        button_layout.addWidget(self.add_button)
-        button_layout.addWidget(self.edit_button)
-        button_layout.addWidget(self.delete_button)
-        button_layout.addWidget(self.start_button)
+        typing_style_layout = QHBoxLayout()
+        typing_style_layout.addWidget(self.style_normal)
+        typing_style_layout.addWidget(self.style_caps)
+        typing_style_layout.addWidget(self.style_lower)
+        typing_style_layout.addWidget(self.style_sentence)
+
+        layout.addWidget(self.style_label)
+        layout.addLayout(typing_style_layout)
+        layout.addLayout(typing_options_layout)
+
+        # Start and Stop Buttons
+        start_stop_layout = QHBoxLayout()
+        self.start_button = self.create_button("Start Typing", "#2ecc71", font_size="18px")
+        self.stop_button = self.create_button("Stop Typing", "#c0392b", font_size="18px")
+        start_stop_layout.addWidget(self.start_button)
+        start_stop_layout.addWidget(self.stop_button)
+        layout.addLayout(start_stop_layout)
 
         # Footer
-        footer = QLabel("Designed and Developed by IoT Labs")
+        footer = QLabel("Paste your code and wait for 5 seconds.")
+        footer.setStyleSheet("color: white; font-size: 14px;")
         footer.setAlignment(Qt.AlignCenter)
+        layout.addWidget(footer)
 
-        # Main Layout
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(self.table)
-        main_layout.addLayout(button_layout)
-        main_layout.addWidget(footer)
-
+        # Main Container
         container = QWidget()
-        container.setLayout(main_layout)
+        container.setLayout(layout)
         self.setCentralWidget(container)
 
-        self.load_data()
+        # Connect Buttons
+        self.start_button.clicked.connect(self.start_typing)
+        self.stop_button.clicked.connect(self.stop_typing)
+        self.copy_button.clicked.connect(self.copy_text)
+        self.paste_button.clicked.connect(self.paste_text)
+        self.cut_button.clicked.connect(self.cut_text)
+        self.clear_button.clicked.connect(self.clear_text)
+        self.load_button.clicked.connect(self.load_text)
 
-    def show_add_new_dialog(self):
-        dialog = AddNewDialog()
-        if dialog.exec_() == QDialog.Accepted:
-            shortcut = dialog.shortcut_key_input.text()
-            text = dialog.text_input.toPlainText()
-            delay_min = dialog.delay_min.value()
-            delay_max = dialog.delay_max.value()
-            repeats = dialog.repeats_input.value()
+        # Keyboard Shortcut to Stop Typing
+        self.stop_shortcut = QShortcut(QKeySequence("Ctrl+Q"), self)
+        self.stop_shortcut.activated.connect(self.stop_typing)
 
-            row = self.table.rowCount()
-            self.table.insertRow(row)
-            self.table.setItem(row, 0, QTableWidgetItem(shortcut))
-            self.table.setItem(row, 1, QTableWidgetItem(text))
-            self.table.setItem(row, 2, QTableWidgetItem(f"{delay_min}-{delay_max}"))
-            self.table.setItem(row, 3, QTableWidgetItem(str(repeats)))
+    def set_ui_style(self):
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #2c3e50;
+            }
+            QLabel {
+                color: white;
+            }
+            QRadioButton {
+                color: white;
+                font-size: 14px;
+            }
+        """)
 
-    def show_edit_dialog(self):
-        selected_row = self.table.currentRow()
-        if selected_row >= 0:
-            data = []
-            for col in range(self.table.columnCount()):
-                data.append(self.table.item(selected_row, col).text())
-            dialog = AddNewDialog(data)
-            if dialog.exec_() == QDialog.Accepted:
-                shortcut = dialog.shortcut_key_input.text()
-                text = dialog.text_input.toPlainText()
-                delay_min = dialog.delay_min.value()
-                delay_max = dialog.delay_max.value()
-                repeats = dialog.repeats_input.value()
+    def create_button(self, text, color, font_size="16px"):
+        button = QPushButton(text)
+        button.setStyleSheet(f"""
+            QPushButton {{
+                font-size: {font_size};
+                background-color: {color};
+                color: white;
+                font-weight: bold;
+                padding: 10px;
+                border-radius: 15px;
+                min-width: 100px;
+            }}
+            QPushButton:hover {{
+                background-color: #2980b9;
+            }}
+            QPushButton:pressed {{
+                background-color: #1abc9c;
+            }}
+        """)
+        return button
 
-                self.table.setItem(selected_row, 0, QTableWidgetItem(shortcut))
-                self.table.setItem(selected_row, 1, QTableWidgetItem(text))
-                self.table.setItem(selected_row, 2, QTableWidgetItem(f"{delay_min}-{delay_max}"))
-                self.table.setItem(selected_row, 3, QTableWidgetItem(str(repeats)))
+    def start_typing(self):
+        text = self.text_edit.toPlainText()
+        if not text.strip():
+            return  # Do nothing if text is empty
 
-    def delete_selected_row(self):
-        selected_row = self.table.currentRow()
-        if selected_row >= 0:
-            self.table.removeRow(selected_row)
+        self.is_typing = True
+        self.thread = threading.Thread(target=self.typing_process, args=(text,))
+        self.thread.start()
 
-    def start_autotyper(self):
-        rows = self.table.rowCount()
-        for row in range(rows):
-            # Get data from table
-            shortcut = self.table.item(row, 0).text()
-            text = self.table.item(row, 1).text()
-            delay_str = self.table.item(row, 2).text().split('-')
-            delay_min = int(delay_str[0])
-            delay_max = int(delay_str[1])
-            repeats = int(self.table.item(row, 3).text())
+    def typing_process(self, text):
+        typing_speed_map = {"60 WPM": 60, "100 WPM": 100, "150 WPM": 150}
+        typing_speed = typing_speed_map[self.speed_dropdown.currentText()]
+        delay_min = 60 / typing_speed  # Delay based on WPM
 
-            # Typing logic (just a placeholder)
-            for _ in range(repeats):
-                pyautogui.typewrite(text)
-                time.sleep(random.uniform(delay_min / 1000, delay_max / 1000))
+        for char in text:
+            if not self.is_typing:
+                return  # Stop typing if flag is set to False
 
-    def load_data(self):
-        # Load data into table (for demo purposes, static data is used here)
-        data = [
-            ["Ctrl+Alt+T", "Hello World!", "10-50", "5", "Test entry"]
-        ]
-        for entry in data:
-            row = self.table.rowCount()
-            self.table.insertRow(row)
-            for col, value in enumerate(entry):
-                self.table.setItem(row, col, QTableWidgetItem(value))
+            # Apply style based on radio buttons
+            if self.style_caps.isChecked():
+                char = char.upper()
+            elif self.style_lower.isChecked():
+                char = char.lower()
+            elif self.style_sentence.isChecked() and char.isalpha():
+                char = char.upper() if text.index(char) == 0 or text[text.index(char) - 1] == ' ' else char
+
+            pyautogui.typewrite(char)
+            time.sleep(uniform(delay_min / 10, delay_min / 5))  # Random delay for more natural typing
+
+    def stop_typing(self):
+        self.is_typing = False
+        if self.thread and self.thread.is_alive():
+            self.thread.join()  # Ensure the typing thread stops safely
+
+    def copy_text(self):
+        self.text_edit.selectAll()
+        self.text_edit.copy()
+
+    def paste_text(self):
+        self.text_edit.paste()
+
+    def cut_text(self):
+        self.text_edit.selectAll()
+        self.text_edit.cut()
+
+    def clear_text(self):
+        self.text_edit.clear()
+
+    def load_text(self):
+        file_name, _ = QFileDialog.getOpenFileName(
+            self, "Load Text", "", "Text Files (*.txt);;Word Files (*.docx)"
+        )
+        if file_name:
+            if file_name.endswith(".txt"):
+                with open(file_name, "r") as file:
+                    self.text_edit.setText(file.read())
+            elif file_name.endswith(".docx"):
+                document = Document(file_name)
+                content = "\n".join([para.text for para in document.paragraphs])
+                self.text_edit.setText(content)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    main_win = AutoTyperApp()
-    main_win.show()
+    window = AutoTyperApp()
+    window.show()
     sys.exit(app.exec_())
