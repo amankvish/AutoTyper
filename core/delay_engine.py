@@ -26,7 +26,9 @@ class DelayEngine:
         mode: str,  # "normal" or "human"
         random_enabled: bool,
         min_delay_ms: int,
-        max_delay_ms: int
+        max_delay_ms: int,
+        punctuation_pause: float = 0.3,
+        line_break_pause: float = 0.5
     ) -> float:
         """
         Computes the delay for the given character.
@@ -38,6 +40,8 @@ class DelayEngine:
             random_enabled: Whether user-defined random delays are enabled.
             min_delay_ms: User-defined minimum delay in milliseconds.
             max_delay_ms: User-defined maximum delay in milliseconds.
+            punctuation_pause: Custom pause time for punctuation marks.
+            line_break_pause: Custom pause time for newlines.
             
         Returns:
             Delay in seconds to sleep before typing this character.
@@ -62,9 +66,9 @@ class DelayEngine:
         if mode == "human":
             # Extra pause after punctuation
             if char in HUMAN_PAUSE_PUNCTUATION:
-                delay += HUMAN_PAUSE_PUNCTUATION[char]
+                delay += punctuation_pause
             # Extra pause after newlines
             elif char in ('\n', '\r'):
-                delay += HUMAN_PAUSE_ENTER
+                delay += line_break_pause
 
         return max(0.0, delay)

@@ -1,8 +1,10 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPlainTextEdit,
     QSlider, QRadioButton, QCheckBox, QSpinBox, QGroupBox, QStatusBar,
-    QProgressBar, QToolButton, QStackedWidget, QScrollArea, QTextBrowser
+    QProgressBar, QToolButton, QStackedWidget, QScrollArea, QTextBrowser,
+    QComboBox, QLineEdit
 )
+from app.code_editor import CodeEditor
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 import os
@@ -68,6 +70,10 @@ class AutoTyperUI:
         window.help_btn.setMinimumWidth(80)
         header_layout.addWidget(window.help_btn)
 
+        window.settings_btn = QPushButton("⚙ Settings", dashboard_page)
+        window.settings_btn.setMinimumWidth(90)
+        header_layout.addWidget(window.settings_btn)
+
         main_layout.addLayout(header_layout)
 
         # 2. Toolbar (File Actions & Clipboard)
@@ -77,22 +83,78 @@ class AutoTyperUI:
         window.load_btn = QToolButton(dashboard_page)
         window.load_btn.setText("📁 Load File")
         window.load_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        
+        window.fav_btn = QPushButton("⭐", dashboard_page)
+        window.fav_btn.setCheckable(True)
+        window.fav_btn.setToolTip("Toggle Favorite")
+        window.fav_btn.setFixedWidth(30)
+        
         window.copy_btn = QPushButton("📋 Copy", dashboard_page)
+        window.copy_btn.setToolTip("Copy text to clipboard")
+        window.copy_btn.setAccessibleName("Copy")
+        window.copy_btn.setAccessibleDescription("Copies the editor text to your clipboard")
+        
         window.paste_btn = QPushButton("📥 Paste", dashboard_page)
+        window.paste_btn.setToolTip("Paste text from clipboard")
+        window.paste_btn.setAccessibleName("Paste")
+        window.paste_btn.setAccessibleDescription("Pastes text from your clipboard into the editor")
+        
         window.clear_btn = QPushButton("🧹 Clear", dashboard_page)
+        window.clear_btn.setToolTip("Clear the editor")
+        window.clear_btn.setAccessibleName("Clear")
+        window.clear_btn.setAccessibleDescription("Clears all text from the editor")
+
+        window.word_wrap_btn = QPushButton("Wrapping", dashboard_page)
+        window.word_wrap_btn.setCheckable(True)
+        window.word_wrap_btn.setChecked(True)
+        window.word_wrap_btn.setToolTip("Toggle Word Wrap")
+        window.word_wrap_btn.setAccessibleName("Toggle Word Wrap")
+        window.word_wrap_btn.setAccessibleDescription("Toggles line wrapping in the editor")
 
         toolbar_layout.addWidget(window.load_btn)
+        toolbar_layout.addWidget(window.fav_btn)
         toolbar_layout.addWidget(window.copy_btn)
         toolbar_layout.addWidget(window.paste_btn)
         toolbar_layout.addWidget(window.clear_btn)
+        toolbar_layout.addWidget(window.word_wrap_btn)
         toolbar_layout.addStretch()
 
         main_layout.addLayout(toolbar_layout)
 
-        # 3. Editor (Smart text editor with monospace)
-        window.editor = QPlainTextEdit(dashboard_page)
+        # 3. Editor (Custom CodeEditor with Line Numbers)
+        window.editor = CodeEditor(dashboard_page)
         window.editor.setPlaceholderText("Paste your code or text here, or click 'Load File' to import...")
+        window.editor.setAccessibleName("Text Editor")
+        window.editor.setAccessibleDescription("Main editor where you paste or load the text you want to auto-type")
         main_layout.addWidget(window.editor)
+        
+        # Find/Replace Bar (hidden by default)
+        window.find_replace_widget = QWidget(dashboard_page)
+        find_replace_layout = QHBoxLayout(window.find_replace_widget)
+        find_replace_layout.setContentsMargins(0, 5, 0, 0)
+        
+        window.find_input = QLineEdit(window.find_replace_widget)
+        window.find_input.setPlaceholderText("Find...")
+        window.find_next_btn = QPushButton("Find Next", window.find_replace_widget)
+        window.find_prev_btn = QPushButton("Find Prev", window.find_replace_widget)
+        
+        window.replace_input = QLineEdit(window.find_replace_widget)
+        window.replace_input.setPlaceholderText("Replace with...")
+        window.replace_btn = QPushButton("Replace", window.find_replace_widget)
+        window.replace_all_btn = QPushButton("Replace All", window.find_replace_widget)
+        window.close_find_btn = QPushButton("❌", window.find_replace_widget)
+        window.close_find_btn.setFixedWidth(30)
+        
+        find_replace_layout.addWidget(window.find_input)
+        find_replace_layout.addWidget(window.find_prev_btn)
+        find_replace_layout.addWidget(window.find_next_btn)
+        find_replace_layout.addWidget(window.replace_input)
+        find_replace_layout.addWidget(window.replace_btn)
+        find_replace_layout.addWidget(window.replace_all_btn)
+        find_replace_layout.addWidget(window.close_find_btn)
+        
+        window.find_replace_widget.hide()
+        main_layout.addWidget(window.find_replace_widget)
 
         # 4. Settings Panel
         settings_layout = QHBoxLayout()
@@ -103,11 +165,20 @@ class AutoTyperUI:
         speed_layout = QVBoxLayout(speed_group)
         speed_layout.setSpacing(12)
 
+        # Profile Selection Layout
+        profile_layout = QHBoxLayout()
+        profile_layout.addWidget(QLabel("Typing Profile:", speed_group))
+        window.profile_combo = QComboBox(speed_group)
+        window.profile_combo.addItems(["Normal", "Fast", "Slow", "Human", "Custom (Unsaved)"])
+        profile_layout.addWidget(window.profile_combo, 1)
+        
+        speed_layout.addLayout(profile_layout)
+
         # WPM Slider Layout
         wpm_label_layout = QHBoxLayout()
         wpm_title = QLabel("Typing Speed:", speed_group)
         window.speed_val_label = QLabel("60 WPM", speed_group)
-        window.speed_val_label.setStyleSheet("font-weight: 600; color: #b58900;")
+        window.speed_val_label.setObjectName("accent_label")
         wpm_label_layout.addWidget(wpm_title)
         wpm_label_layout.addStretch()
         wpm_label_layout.addWidget(window.speed_val_label)
@@ -177,28 +248,30 @@ class AutoTyperUI:
         control_layout = QHBoxLayout()
         control_layout.setContentsMargins(10, 5, 10, 5)
 
-        # Countdown Status Block
-        countdown_vbox = QVBoxLayout()
-        countdown_title = QLabel("Action Delay Countdown:", dashboard_page)
-        countdown_title.setStyleSheet("font-size: 11px; color: #93a1a1;")
+        countdown_layout = QVBoxLayout()
+        countdown_title = QLabel("ETA / Countdown", dashboard_page)
         window.countdown_label = QLabel("Ready", dashboard_page)
-        window.countdown_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #b58900;")
-        countdown_vbox.addWidget(countdown_title)
-        countdown_vbox.addWidget(window.countdown_label)
-        control_layout.addLayout(countdown_vbox)
+        window.countdown_label.setObjectName("countdown_label")
+        countdown_layout.addWidget(countdown_title)
+        countdown_layout.addWidget(window.countdown_label)
+        control_layout.addLayout(countdown_layout)
 
         control_layout.addStretch()
 
         # Action Buttons
-        window.start_btn = QPushButton("▶ Start Typing", dashboard_page)
-        window.start_btn.setObjectName("start_btn")
-        window.start_btn.setMinimumHeight(44)
-        window.start_btn.setMinimumWidth(150)
+        window.start_btn = QPushButton("▶ Start AutoTyping", dashboard_page)
+        window.start_btn.setObjectName("primary_action")
+        window.start_btn.setMinimumHeight(40)
+        window.start_btn.setToolTip("Begin typing the text (Ctrl+T)")
+        window.start_btn.setAccessibleName("Start Auto Typing")
+        window.start_btn.setAccessibleDescription("Begins typing the text from the editor using the configured speed and mode")
 
-        window.stop_btn = QPushButton("⏹ Stop Typing", dashboard_page)
-        window.stop_btn.setObjectName("stop_btn")
-        window.stop_btn.setEnabled(False)
-        window.stop_btn.setMinimumHeight(44)
+        window.stop_btn = QPushButton("■ Stop / Cancel", dashboard_page)
+        window.stop_btn.setObjectName("danger_action")
+        window.stop_btn.setMinimumHeight(40)
+        window.stop_btn.setToolTip("Stop typing immediately (Global ESC)")
+        window.stop_btn.setAccessibleName("Stop Auto Typing")
+        window.stop_btn.setAccessibleDescription("Immediately stops the active typing process")
         window.stop_btn.setMinimumWidth(150)
 
         control_layout.addWidget(window.start_btn)
@@ -207,14 +280,9 @@ class AutoTyperUI:
         main_layout.addLayout(control_layout)
 
         # Footer
-        window.footer_label = QLabel(
-            'AutoTyper by <a href="https://theiotlabs.in/" style="color: #b58900; text-decoration: none; font-weight: 500;">The IoT Labs</a>',
-            dashboard_page
-        )
-        window.footer_label.setOpenExternalLinks(True)
+        window.footer_label = QLabel("Press 'Ctrl+T' to start typing instantly. Press 'ESC' at any time to panic stop.", dashboard_page)
+        window.footer_label.setObjectName("footer_hint")
         window.footer_label.setAlignment(Qt.AlignCenter)
-        window.footer_label.setObjectName("footer_label")
-        window.footer_label.setStyleSheet("font-size: 11px; margin-top: 5px; margin-bottom: 5px;")
         main_layout.addWidget(window.footer_label)
 
         window.stacked_widget.addWidget(dashboard_page)  # Index 0
@@ -421,8 +489,17 @@ class AutoTyperUI:
         window.status_msg_label = QLabel("Ready", window)
         window.status_bar.addWidget(window.status_msg_label, 1)
 
+        # New Status Bar indicators
+        window.status_time_label = QLabel("Est. Time: 0s", window)
+        window.status_bar.addPermanentWidget(window.status_time_label)
+
+        window.status_profile_label = QLabel("Profile: None", window)
+        window.status_bar.addPermanentWidget(window.status_profile_label)
+
+        window.status_mode_label = QLabel("Mode: Normal", window)
+        window.status_bar.addPermanentWidget(window.status_mode_label)
+
         window.status_stats_label = QLabel("Chars: 0 | Words: 0 | Lines: 0", window)
-        window.status_stats_label.setStyleSheet("color: #93a1a1; font-size: 11px; font-weight: 500;")
         window.status_bar.addPermanentWidget(window.status_stats_label)
 
         window.status_progress_bar = QProgressBar(window)

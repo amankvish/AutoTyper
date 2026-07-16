@@ -6,26 +6,23 @@ An automated keyboard typing simulation utility designed and developed by **The 
 
 ## 🚀 Key Features
 
+* **Typing Profiles (v1.1)**: Switch between Built-in Profiles (Normal, Fast, Slow, Human) or save your custom speeds and delays.
+* **Code Editor (v1.1)**: Monospaced editor featuring dynamic Line Numbers, Word Wrap toggle, Go To Line (`Ctrl+G`), Duplicate/Delete lines (`Ctrl+D`/`Ctrl+L`), and an inline Find/Replace bar (`Ctrl+F`).
+* **Session Restore (v1.1)**: Automatically restores your unsaved text, cursor location, selection, and scroll position on restart.
+* **File Favorites (v1.1)**: Star (⭐) important files to pin them at the top of the Recent Files dropdown.
+* **Settings Manager (v1.1)**: Dedicated UI to configure Auto-Save, Startup Profile, Session Restore, and Export/Import config backups.
 * **Background Threading**: Keystroke emulation runs on a separate worker thread (`QThread`), keeping the GUI responsive and letting you abort instantly.
 * **Emergency Stop**: Press the global **`ESC`** key at any point to stop typing immediately, even if the application is not currently focused.
-* **Smart Text Editor**: Monospaced text box styled after Windows 11 Fluent UI, preserving tabs, spacing, and indentations exactly.
 * **Document File Loader**: Load and parse text directly from Plain Text (`.txt`), Markdown (`.md`), and Microsoft Word (`.docx` via `python-docx`) files.
-* **Splash Screen Loader**: Premium graphic screen displayed dynamically for 1.5 seconds on application boot.
-* **First Launch Welcome Panel**: Helpful quick-start tips shown automatically on first launch to guide new users.
-* **Keyboard Shortcuts**: Mapped shortcuts (Ctrl+O, Ctrl+T, Ctrl+W, Ctrl+H, F1, Ctrl+Q) for power users.
+* **Keyboard Shortcuts**: Mapped shortcuts (Ctrl+O, Ctrl+T, Ctrl+W, F1, Ctrl+Q, Ctrl+F) for power users.
 * **Document Drag & Drop**: Drag `.txt`, `.md`, or `.docx` files directly onto the app window to import them instantly.
-* **Themed Dialogs**: Styled message boxes (errors, warnings, and prompts) matching the active Dark/Light stylesheet.
-* **Exit Safety Checks**: Double-checks with the user before stopping active typing execution or discarding current text edits.
+* **Themed Dialogs & Toast Notifications**: Sleek notifications that fade out automatically without interrupting your workflow.
 * **Character Stats Counter**: Shows live counts of Characters, Words, and Lines inside the status bar.
-* **Estimated Typing Time**: Calculates and displays total estimated typing time next to WPM slider, and remaining duration during execution in the status bar.
-* **Recent Files Dropdown**: Accessible menu associated with the Load File button that lists the last 5 files opened.
-* **Session Memory**: Remembers and restores window positions, sizes, editor text, cursor location, theme mode, and typing configurations automatically.
-* **Typing Speed Slider**: Fine-tune your typing speed between `20 WPM` and `200 WPM`.
+* **Estimated Typing Time**: Calculates and displays total estimated typing time next to the profile and mode status.
 * **Typing Simulation Modes**:
   * **Normal Mode**: Consistent, uniform typing speed.
   * **Human Mode**: Introduces natural micro-pauses between letters and longer delays after punctuation (`.`, `,`, `!`, `?`, etc.) and newlines.
 * **Optional Random Delay**: Enable random delays with customizable minimum and maximum delay limits (in milliseconds).
-* **Settings Persistence**: Saves your WPM speed, typing mode, delay ranges, theme choices, and window size/position inside a local `config.json` file.
 * **Dark / Light Modes**: A modern, sleek user interface with support for Windows 11 style rounded corners and high-contrast styling.
 
 ---

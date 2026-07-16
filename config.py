@@ -25,7 +25,8 @@ def get_resource_path(relative_path: str) -> str:
 
 CONFIG_FILE_PATH = os.path.join(get_app_dir(), "config.json")
 AUTOSAVE_FILE_PATH = os.path.join(get_app_dir(), "autosave.txt")
-MAX_RECENT_FILES = 5
+# App Limits
+MAX_RECENT_FILES = 10
 
 # Typing Constants
 MIN_WPM = 20

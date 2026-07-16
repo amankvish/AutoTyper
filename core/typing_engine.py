@@ -94,6 +94,8 @@ class TypingWorker(QThread):
         random_enabled: bool,
         min_delay_ms: int,
         max_delay_ms: int,
+        punctuation_pause: float = 0.3,
+        line_break_pause: float = 0.5,
         countdown_sec: int = 5
     ):
         super().__init__()
@@ -103,6 +105,8 @@ class TypingWorker(QThread):
         self.random_enabled = random_enabled
         self.min_delay_ms = min_delay_ms
         self.max_delay_ms = max_delay_ms
+        self.punctuation_pause = punctuation_pause
+        self.line_break_pause = line_break_pause
         self.countdown_sec = countdown_sec
         
         self._is_running = True
@@ -151,7 +155,9 @@ class TypingWorker(QThread):
                     mode=self.mode,
                     random_enabled=self.random_enabled,
                     min_delay_ms=self.min_delay_ms,
-                    max_delay_ms=self.max_delay_ms
+                    max_delay_ms=self.max_delay_ms,
+                    punctuation_pause=self.punctuation_pause,
+                    line_break_pause=self.line_break_pause
                 )
                 
                 # Dynamic sleeping

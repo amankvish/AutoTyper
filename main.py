@@ -31,6 +31,12 @@ def main() -> None:
     app.setApplicationName("AutoTyper")
     app.setOrganizationName("The IoT Labs")
 
+    # Load global stylesheet
+    style_path = os.path.join(os.path.dirname(__file__), "app", "style.qss")
+    if os.path.exists(style_path):
+        with open(style_path, "r", encoding="utf-8") as f:
+            app.setStyleSheet(f.read())
+
     # 3. Initialize Splash Screen
     splash_path = config.get_resource_path("autotyper_splash.png")
     splash = None

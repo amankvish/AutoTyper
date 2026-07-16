@@ -47,13 +47,13 @@ class TestAutoTyperCore(unittest.TestCase):
         # Period '.' adds 0.35s delay. Base fluctuated: [0.16s, 0.24s]
         # Total delay: [0.51s, 0.59s]
         for _ in range(20):
-            delay_dot = DelayEngine.get_delay(".", 60, "human", False, 10, 100)
+            delay_dot = DelayEngine.get_delay(".", 60, "human", False, 10, 100, punctuation_pause=0.35)
             self.assertGreaterEqual(delay_dot, 0.51)
             self.assertLessEqual(delay_dot, 0.59)
 
         # Newline '\n' adds 0.50s delay (HUMAN_PAUSE_ENTER). Total: [0.66s, 0.74s]
         for _ in range(20):
-            delay_nl = DelayEngine.get_delay("\n", 60, "human", False, 10, 100)
+            delay_nl = DelayEngine.get_delay("\n", 60, "human", False, 10, 100, line_break_pause=0.50)
             self.assertGreaterEqual(delay_nl, 0.66)
             self.assertLessEqual(delay_nl, 0.74)
 
@@ -192,20 +192,19 @@ class TestAutoTyperCore(unittest.TestCase):
             os.remove(temp_path)
 
     def test_settings_service_recent_files_capping(self) -> None:
-        """Verify that recent files capped list behaves like a FIFO with max 5 files."""
+        """Verify that recent files capped list behaves like a FIFO with max 10 files."""
         service = SettingsService()
         # Clear recent list first
         service.set("recent_files", [])
-        
-        paths = ["p1.txt", "p2.txt", "p3.txt", "p4.txt", "p5.txt", "p6.txt"]
+
+        paths = [f"p{i}.txt" for i in range(1, 13)]
         for p in paths:
             service.add_recent_file(p)
-            
+
         recent = service.get("recent_files")
-        self.assertEqual(len(recent), 5)
-        # Newest first, so "p6.txt" should be first, "p1.txt" is dropped
-        self.assertEqual(recent[0], os.path.normpath("p6.txt"))
-        self.assertEqual(recent[-1], os.path.normpath("p2.txt"))
+        self.assertEqual(len(recent), 10)
+        self.assertEqual(recent[0], os.path.normpath("p12.txt"))
+        self.assertEqual(recent[-1], os.path.normpath("p3.txt"))
         self.assertNotIn(os.path.normpath("p1.txt"), recent)
 
     def test_file_loader_utf8_bom_and_utf16(self) -> None:

@@ -24,7 +24,64 @@ class SettingsService:
         "last_opened_file": "",
         "editor_cursor_position": 0,
         "editor_text": "",
-        "first_launch": True
+        "first_launch": True,
+        "autosave_enabled": True,
+        "remember_window_position": True,
+        "restore_session": True,
+        "editor_selection_start": -1,
+        "editor_selection_end": -1,
+        "editor_scroll_value": 0,
+        "favorite_files": [],
+        "custom_countdown": 5,
+        "default_profile": "Normal",
+        # v1.1 Settings
+        "current_profile": "Human",
+        "typing_profiles": {
+            "Normal": {
+                "wpm": 60,
+                "random_delay_enabled": False,
+                "min_delay_ms": 10,
+                "max_delay_ms": 100,
+                "typing_mode": "normal",
+                "countdown": 5,
+                "punctuation_pause": 0.0,
+                "line_break_pause": 0.0
+            },
+            "Fast": {
+                "wpm": 120,
+                "random_delay_enabled": True,
+                "min_delay_ms": 5,
+                "max_delay_ms": 30,
+                "typing_mode": "normal",
+                "countdown": 3,
+                "punctuation_pause": 0.1,
+                "line_break_pause": 0.2
+            },
+            "Slow": {
+                "wpm": 30,
+                "random_delay_enabled": True,
+                "min_delay_ms": 50,
+                "max_delay_ms": 200,
+                "typing_mode": "human",
+                "countdown": 5,
+                "punctuation_pause": 0.5,
+                "line_break_pause": 0.8
+            },
+            "Human": {
+                "wpm": 60,
+                "random_delay_enabled": True,
+                "min_delay_ms": 10,
+                "max_delay_ms": 100,
+                "typing_mode": "human",
+                "countdown": 5,
+                "punctuation_pause": 0.3,
+                "line_break_pause": 0.5
+            }
+        },
+        "custom_countdown": 5,
+        "restore_session": True,
+        "autosave_interval": 1,
+        "favorite_files": []
     }
 
     def __init__(self):
@@ -64,9 +121,10 @@ class SettingsService:
         except Exception as e:
             logger.error(f"Failed to save configuration: {e}")
 
-    def get(self, key: str) -> Any:
+    def get(self, key: str, default: Any = None) -> Any:
         """Gets a setting value by key."""
-        return self.settings.get(key, self._defaults.get(key))
+        val = self.settings.get(key, self._defaults.get(key))
+        return val if val is not None else default
 
     def set(self, key: str, value: Any) -> None:
         """Sets a setting value and saves the configuration."""
@@ -114,3 +172,34 @@ class SettingsService:
         # Use direct dict assignment to avoid calling save() twice, then save manually
         self.settings["recent_files"] = recent
         self.save()
+
+    def toggle_favorite(self, file_path: str) -> bool:
+        """Toggles the favorite status of a file path. Returns True if it is now a favorite."""
+        if not file_path:
+            return False
+            
+        favorites = self.get("favorite_files")
+        if not isinstance(favorites, list):
+            favorites = []
+            
+        normalized_path = os.path.normpath(file_path)
+        
+        if normalized_path in favorites:
+            favorites.remove(normalized_path)
+            is_fav = False
+        else:
+            favorites.insert(0, normalized_path)
+            is_fav = True
+            
+        self.settings["favorite_files"] = favorites
+        self.save()
+        return is_fav
+
+    def is_favorite(self, file_path: str) -> bool:
+        """Checks if a file path is a favorite."""
+        if not file_path:
+            return False
+        favorites = self.get("favorite_files")
+        if not isinstance(favorites, list):
+            return False
+        return os.path.normpath(file_path) in favorites
