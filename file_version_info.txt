@@ -1,0 +1,36 @@
+# UTF-8
+# Windows Executable Version Metadata for PyInstaller
+# For more info: http://msdn.microsoft.com/en-us/library/ms646997.aspx
+
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 0, 0),
+    prodvers=(1, 0, 0, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    VarFileInfo([VarStruct('Translation', [1033, 1200])]),
+    StringFileInfo(
+      [
+        StringTable(
+          '040904b0',
+          [
+            StringStruct('CompanyName', 'The IoT Labs'),
+            StringStruct('FileDescription', 'AutoTyper Keyboard Emulator'),
+            StringStruct('FileVersion', '1.0.0.0'),
+            StringStruct('InternalName', 'autotyper'),
+            StringStruct('LegalCopyright', 'Copyright (c) 2026 The IoT Labs. All rights reserved.'),
+            StringStruct('OriginalFilename', 'autotyper.exe'),
+            StringStruct('ProductName', 'AutoTyper'),
+            StringStruct('ProductVersion', '1.0.0.0')
+          ]
+        )
+      ]
+    )
+  ]
+)

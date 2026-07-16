@@ -1,181 +1,180 @@
-# AutoTyper
+# AutoTyper Project
 
-```markdown
-AutoTyper is a Python-based desktop application built using PyQt5 and pyautogui that allows you to automate typing tasks. The app can simulate typing with random delays, support multiple typing styles, and automate repetitive typing processes with customizable shortcut keys.
-
-## Features
-
-- Custom Shortcut Keys: Assign shortcut keys to start the auto-typing process.
-- Text to Type: Define the text that should be typed when the shortcut is activated.
-- Random Delay: Set a random delay (min/max) between key presses for more human-like typing.
-- Typing Styles: Choose from multiple typing styles:
-  - Normal: Type text as it is.
-  - All CAPS: Type all text in uppercase.
-  - Sentence Case: Capitalize the first letter of each sentence.
-  - Lowercase: Type all text in lowercase.
-- Repeats: Set how many times the text should be typed.
-- Start/Stop Typing: Activate or stop auto-typing by pressing the assigned shortcut key.
+An automated keyboard typing simulation utility designed and developed by **The IoT Labs**. This production-grade Windows desktop application is built using Python 3.12+, PySide6 (Qt6), and native Windows SendInput APIs (with PyAutoGUI fallback). It provides a simple, safe, and highly reliable text typing automation experience.
 
 ---
 
-## Installation
+## 🚀 Key Features
 
-### Prerequisites
-
-Before you install and run AutoTyper, make sure you have the following software installed on your machine:
-
-- Python 3.x: [Download Python](https://www.python.org/downloads/)
-- pip: Python’s package manager. If you don’t have it, install it from [here](https://pip.pypa.io/en/stable/installation/).
-
-### Setting Up the Project
-
-1. Clone the repository or download the source code:
-   ```bash
-   git clone https://github.com/yourusername/AutoTyper.git
-   ```
-
-2. Create a virtual environment (optional but recommended):
-   ```bash
-   python -m venv autotyper_env
-   source autotyper_env/bin/activate   # For Linux/macOS
-   autotyper_env\Scripts\activate      # For Windows
-   ```
-
-3. Install dependencies:
-   - Create and activate a virtual environment if you haven't already, then run the following:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   This will install the required dependencies:
-   - `PyQt5`: For the graphical user interface (GUI).
-   - `pyautogui`: For simulating keystrokes.
+* **Background Threading**: Keystroke emulation runs on a separate worker thread (`QThread`), keeping the GUI responsive and letting you abort instantly.
+* **Emergency Stop**: Press the global **`ESC`** key at any point to stop typing immediately, even if the application is not currently focused.
+* **Smart Text Editor**: Monospaced text box styled after Windows 11 Fluent UI, preserving tabs, spacing, and indentations exactly.
+* **Document File Loader**: Load and parse text directly from Plain Text (`.txt`), Markdown (`.md`), and Microsoft Word (`.docx` via `python-docx`) files.
+* **Splash Screen Loader**: Premium graphic screen displayed dynamically for 1.5 seconds on application boot.
+* **First Launch Welcome Panel**: Helpful quick-start tips shown automatically on first launch to guide new users.
+* **Keyboard Shortcuts**: Mapped shortcuts (Ctrl+O, Ctrl+T, Ctrl+W, Ctrl+H, F1, Ctrl+Q) for power users.
+* **Document Drag & Drop**: Drag `.txt`, `.md`, or `.docx` files directly onto the app window to import them instantly.
+* **Themed Dialogs**: Styled message boxes (errors, warnings, and prompts) matching the active Dark/Light stylesheet.
+* **Exit Safety Checks**: Double-checks with the user before stopping active typing execution or discarding current text edits.
+* **Character Stats Counter**: Shows live counts of Characters, Words, and Lines inside the status bar.
+* **Estimated Typing Time**: Calculates and displays total estimated typing time next to WPM slider, and remaining duration during execution in the status bar.
+* **Recent Files Dropdown**: Accessible menu associated with the Load File button that lists the last 5 files opened.
+* **Session Memory**: Remembers and restores window positions, sizes, editor text, cursor location, theme mode, and typing configurations automatically.
+* **Typing Speed Slider**: Fine-tune your typing speed between `20 WPM` and `200 WPM`.
+* **Typing Simulation Modes**:
+  * **Normal Mode**: Consistent, uniform typing speed.
+  * **Human Mode**: Introduces natural micro-pauses between letters and longer delays after punctuation (`.`, `,`, `!`, `?`, etc.) and newlines.
+* **Optional Random Delay**: Enable random delays with customizable minimum and maximum delay limits (in milliseconds).
+* **Settings Persistence**: Saves your WPM speed, typing mode, delay ranges, theme choices, and window size/position inside a local `config.json` file.
+* **Dark / Light Modes**: A modern, sleek user interface with support for Windows 11 style rounded corners and high-contrast styling.
 
 ---
 
-## Running the Application
+## 📁 Repository Structure
 
-To run the AutoTyper GUI application, execute the following command in the terminal or command prompt:
+The codebase is organized following clean architectural guidelines, separating user interfaces from backend business logic:
 
-```bash
-python autotyper.py
+```text
+AutoTyper Project/
+│
+├── main.py                 # Application entry point
+├── config.py               # Constants, limitations, & Windows 11 stylesheet templates
+├── requirements.txt        # Python dependency list
+├── autotyper.spec          # PyInstaller packaging configuration
+├── file_version_info.txt   # Windows executable version details
+├── test_core.py            # Unit and integration test suite
+│
+├── app/                    # User Interface Package
+│   ├── ui.py               # Widget declarations and visual layout
+│   └── main_window.py      # Main window controller (signals, threading, file triggers)
+│
+├── core/                   # Core Typing Simulation Logic
+│   ├── typing_engine.py    # Emulation thread worker and global key hook listener
+│   ├── delay_engine.py     # Speed formulas and punctuation pause multipliers
+│   └── formatter.py        # Carriage return normalization utility
+│
+├── services/               # Services Package
+│   ├── settings.py         # Read/write configuration JSON schema
+│   ├── file_loader.py      # Multi-format document parser (.txt, .md, .docx)
+│   └── clipboard.py        # System clipboard interface
+│
+├── docs/                   # Quality Control and Release Documentation
+│   ├── ARCHITECTURE_GUIDE.md # Architectural overview and class diagrams
+│   ├── BUILD_INSTRUCTIONS.md # Step-by-step PyInstaller compilation guide
+│   ├── DEVELOPER_GUIDE.md    # API documentation and testing conventions
+│   ├── INSTALLER_GUIDE.md    # SmartScreen warnings and packaging details
+│   ├── RELEASE_CHECKLIST.md  # Final Release QA Verification Checklist
+│   ├── GITHUB_RELEASE_NOTES.md # Releases details template
+│   ├── QC_REPORT.md        # Final Quality Control audit report
+│   ├── CHANGELOG.md        # Change log details for Version 1.0
+│   ├── RELEASE_NOTES.md    # Release notes & instructions
+│   ├── KNOWN_ISSUES.md     # Environmental constraints & workarounds
+│   └── TEST_REPORT.md      # Automated testing suite log
+│
+├── LICENSE                 # MIT License file
+├── SECURITY.md             # Security disclosures policy
+├── CONTRIBUTING.md         # Contributor guidelines
+├── CODE_OF_CONDUCT.md      # Contributor Covenant Code of Conduct
+└── ROADMAP.md              # Product release roadmap
 ```
 
-This will launch the AutoTyper application window.
+---
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
+Make sure you have **Python 3.12+** installed on your system.
+
+### Step 1: Set up a Virtual Environment
+We recommend running this application in a virtual environment to avoid dependency conflicts:
+
+```bash
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# On Windows (PowerShell):
+.venv\Scripts\activate
+# On Windows (CMD):
+.venv\Scripts\activate.bat
+```
+
+### Step 2: Install Dependencies
+Install all required libraries using `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+This installs:
+* `PySide6` (>=6.6.0) - For building the cross-platform GUI.
+* `pyautogui` (>=0.9.53) - For simulating keyboard keypresses.
+* `python-docx` (>=1.2.0) - For loading and parsing Microsoft Word files.
+* `pynput` (>=1.7.6) - For registering the global `ESC` key listener thread.
+* `pyinstaller` (>=6.3.0) - For packaging the standalone executable.
 
 ---
 
-## Features in Detail
+## 💻 Running the Application
 
-### 1. Add New Shortcut
-   - Click the "Add New" button to add a new typing task.
-   - You can configure the shortcut key, the text to type, the delay between key presses, the number of repetitions, and the typing style.
+Ensure your virtual environment is activated before running the script.
 
-### 2. Edit Existing Shortcut
-   - Select an existing row in the table and click the "Edit" button to modify the task.
-   - Update the shortcut, text, delay, repetitions, and typing style as needed.
-
-### 3. Delete Shortcut
-   - Select the task from the table and click the "Delete" button to remove it.
-
-### 4. Start AutoTyper
-   - Press the "Start AutoTyper" button to activate the typing process. Once started, the app will type the text as defined, simulating human typing behavior based on the settings you've provided.
-
-   - The typing process will start automatically after pressing the assigned shortcut key and will stop when the same key is pressed again.
-
-### 5. Typing Style Options
-   - You can choose from four typing styles:
-     - Normal: Text is typed as-is.
-     - All CAPS: Text is converted to uppercase before typing.
-     - Sentence Case: The first letter of each sentence is capitalized.
-     - Lowercase: All text is converted to lowercase.
-
-### 6. Random Delay
-   - Set Min and Max values for a random delay (in ms). This will introduce variability in the typing speed for a more natural look.
-   - Optionally, set the delay unit to milliseconds (ms) or seconds (s).
-
-### 7. Repeats
-   - Configure how many times you want the text to be typed. This can be useful for automating repetitive tasks.
+```bash
+python main.py
+```
 
 ---
 
-## PyInstaller – Creating a Standalone Executable
+## 📦 Compiling to Standalone Executable (.exe)
 
-If you want to distribute the app as a standalone `.exe` file for Windows users, you can use PyInstaller to package the Python script into an executable.
+You can package this Python application into a standalone executable file for Windows using PyInstaller, so users do not need Python installed to run it.
 
-### Steps to Create an Executable
-
-1. Install PyInstaller (if not installed already):
+1. Ensure PyInstaller is installed:
    ```bash
    pip install pyinstaller
    ```
 
-2. To generate the `.exe` file, run:
+2. Compile using the existing specification file:
    ```bash
-   pyinstaller --onefile --windowed autotyper.py
+   pyinstaller autotyper.spec
    ```
 
-   The `--onefile` flag creates a single executable file, while `--windowed` suppresses the terminal/console window from appearing when the GUI is launched.
-
-3. Once the build process completes, navigate to the `dist` directory. You will find the `autotyper.exe` file there.
-
-4. You can now share the executable with others without requiring Python to be installed on their machines.
+3. The output executable `autotyper.exe` will be created in the `dist/` directory.
 
 ---
 
-## Troubleshooting
+## 🧪 Running Tests
 
-If you encounter any issues with the application:
+A complete unit test suite has been built to test formatting, settings, delays, and file loaders.
 
-- Ensure you have installed all dependencies in the `requirements.txt` file.
-- Double-check that your system's Python version is compatible (Python 3.6 or above).
-- If there are any GUI layout issues, make sure your PyQt5 installation is up to date.
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Acknowledgements
-
-- PyQt5: Used for creating the graphical user interface.
-- pyautogui: Used for simulating keystrokes and mouse movements.
-- MIT License: This project is open-source and free to use.
-
----
-
-## Contact
-
-For any inquiries, bugs, or suggestions, feel free to open an issue on the GitHub repository or contact the project maintainer.
+```bash
+python test_core.py
 ```
 
 ---
 
-### `requirements.txt`
+## 📚 Quality Control and Release Documentation
 
-Here is the `requirements.txt` file which lists the dependencies needed for the project:
-
-```
-pyautogui
-PyQt5
-```
-
-### Directory Structure
-
-Here is an example of how your project directory structure should look:
-
-```
-AutoTyper/
-│
-├── autotyper.py           # The main Python script for the application
-├── requirements.txt       # The list of dependencies for the project
-├── README.md              # Detailed instructions for installation, usage, and more
-├── autotyper_data.json    # The file where the auto-typing tasks are saved (JSON format)
-└── LICENSE                # Open-source license for the project (MIT License)
-```
+More details about the release can be found in the **[docs/](file:///d:/IoT%20Labs/AutoTyper%20Project/docs)** folder:
+* **[docs/QC_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/QC_REPORT.md)**: Product Quality Control audit details and readiness score.
+* **[docs/CHANGELOG.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/CHANGELOG.md)**: Version history, additions, changes, and removals.
+* **[docs/RELEASE_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/RELEASE_REPORT.md)**: Final pre-release audit, verification, and code sign parameters.
+* **[docs/RELEASE_NOTES.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/RELEASE_NOTES.md)**: Target users, features, and deployment parameters.
+* **[docs/KNOWN_ISSUES.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/KNOWN_ISSUES.md)**: Workarounds for auto-indentation and admin privileges.
+* **[docs/TEST_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/TEST_REPORT.md)**: Expanded unit test suite results.
+* **[docs/RELEASE_CHECKLIST.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/RELEASE_CHECKLIST.md)**: Quality Assurance verification checklist.
+* **[docs/BUILD_INSTRUCTIONS.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/BUILD_INSTRUCTIONS.md)**: PyInstaller compilation steps.
+* **[docs/DEVELOPER_GUIDE.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/DEVELOPER_GUIDE.md)**: Core components documentation and design styles.
+* **[docs/ARCHITECTURE_GUIDE.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/ARCHITECTURE_GUIDE.md)**: Class maps, threading synchronization, and crash prevention structures.
+* **[docs/INSTALLER_GUIDE.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/INSTALLER_GUIDE.md)**: Windows SmartScreen workarounds, executable signing details, and Inno Setup integration.
+* **[docs/GITHUB_RELEASE_NOTES.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/GITHUB_RELEASE_NOTES.md)**: Release tags summary.
+* **[docs/UI_UX_DESIGN_PROPOSAL.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/UI_UX_DESIGN_PROPOSAL.md)**: Design philosophy, visual tokens, and interface guides.
 
 ---
 
-With these two files (`README.md` and `requirements.txt`), your project is ready for distribution.
+## 🛡️ Legal and Community Policies
+* **[LICENSE](LICENSE)**: MIT License details.
+* **[SECURITY.md](SECURITY.md)**: Security vulnerability disclosures and offline policy details.
+* **[CONTRIBUTING.md](CONTRIBUTING.md)**: Development guidelines, setup, and PR conventions.
+* **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)**: Contributor Covenant Code of Conduct.
+* **[ROADMAP.md](ROADMAP.md)**: Product release roadmap.

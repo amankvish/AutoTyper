@@ -1,11 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
-    ['autotyper.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[
+        ('resources/autotyper_splash.png', '.'),
+        ('resources/autotyper_icon.png', '.'),
+        ('resources/autotyper_icon.ico', '.')
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,4 +38,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='resources/autotyper_icon.ico',
+    version='file_version_info.txt',
 )

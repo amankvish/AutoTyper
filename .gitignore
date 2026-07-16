@@ -1,0 +1,23 @@
+# Python compiled bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Installer / Packaging outputs
+build/
+dist/
+*.spec
+
+# IDE configurations
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Runtime generated files
+config.json
+autosave.txt
