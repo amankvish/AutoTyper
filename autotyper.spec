@@ -14,25 +14,23 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['PyQt5', 'PyQt6', 'PySide2'],
+    excludes=['PyQt5', 'PyQt6', 'PySide2', 'tkinter', '_tkinter'],
     noarchive=False,
     optimize=0,
 )
 pyz = PYZ(a.pure)
 
+# Directory-based build (onedir) - bypasses most Windows security blocks
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
-    name='autotyper',
+    exclude_binaries=True,
+    name='AutoTyper',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -41,4 +39,15 @@ exe = EXE(
     entitlements_file=None,
     icon='resources/autotyper_icon.ico',
     version='file_version_info.txt',
+    uac_admin=False,
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='AutoTyper',
 )
