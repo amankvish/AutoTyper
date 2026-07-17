@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QComboBox, QLineEdit
 )
 from app.code_editor import CodeEditor
+from app.highlighter import SyntaxHighlighter
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 import os
@@ -132,6 +133,7 @@ class AutoTyperUI:
         window.editor.setAccessibleName("Text Editor")
         window.editor.setAccessibleDescription("Main editor where you paste or load the text you want to auto-type")
         window.editor.setMinimumHeight(200) # Guarantee a minimum readable size
+        window.highlighter = SyntaxHighlighter(window.editor.document())
         main_layout.addWidget(window.editor, stretch=1)
         
         # Find/Replace Bar (hidden by default)

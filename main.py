@@ -26,8 +26,16 @@ def main() -> None:
     logger = logging.getLogger("AutoTyper")
     logger.info("Initializing AutoTyper Application...")
 
+    # Suppress benign Qt Windows DPI warnings
+    os.environ["QT_LOGGING_RULES"] = "qt.qpa.window=false;qt.text.font.*=false"
+
     # 2. Create the Qt Application
     app = QApplication(sys.argv)
+    
+    # Set a robust default font to prevent QFont PointSize warnings (-1)
+    from PySide6.QtGui import QFont
+    app.setFont(QFont("Segoe UI Variable", 10))
+    
     app.setApplicationName("AutoTyper")
     app.setOrganizationName("The IoT Labs")
 
