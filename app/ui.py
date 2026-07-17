@@ -61,8 +61,8 @@ class AutoTyperUI:
 
         header_layout.addStretch()
 
-        # How to Use & Help Buttons
-        window.instructions_btn = QPushButton("📖 How to Use", dashboard_page)
+        # Instructions & Help Buttons
+        window.instructions_btn = QPushButton("📖 Instructions", dashboard_page)
         window.instructions_btn.setMinimumWidth(110)
         header_layout.addWidget(window.instructions_btn)
 
@@ -111,12 +111,17 @@ class AutoTyperUI:
         window.word_wrap_btn.setAccessibleName("Toggle Word Wrap")
         window.word_wrap_btn.setAccessibleDescription("Toggles line wrapping in the editor")
 
+        window.toggle_find_btn = QPushButton("🔍 Find", dashboard_page)
+        window.toggle_find_btn.setCheckable(True)
+        window.toggle_find_btn.setToolTip("Toggle Find & Replace Bar")
+
         toolbar_layout.addWidget(window.load_btn)
         toolbar_layout.addWidget(window.fav_btn)
         toolbar_layout.addWidget(window.copy_btn)
         toolbar_layout.addWidget(window.paste_btn)
         toolbar_layout.addWidget(window.clear_btn)
         toolbar_layout.addWidget(window.word_wrap_btn)
+        toolbar_layout.addWidget(window.toggle_find_btn)
         toolbar_layout.addStretch()
 
         main_layout.addLayout(toolbar_layout)
@@ -126,7 +131,8 @@ class AutoTyperUI:
         window.editor.setPlaceholderText("Paste your code or text here, or click 'Load File' to import...")
         window.editor.setAccessibleName("Text Editor")
         window.editor.setAccessibleDescription("Main editor where you paste or load the text you want to auto-type")
-        main_layout.addWidget(window.editor)
+        window.editor.setMinimumHeight(200) # Guarantee a minimum readable size
+        main_layout.addWidget(window.editor, stretch=1)
         
         # Find/Replace Bar (hidden by default)
         window.find_replace_widget = QWidget(dashboard_page)
@@ -241,7 +247,7 @@ class AutoTyperUI:
         # Vertical spacer to balance layout
         delay_layout.addStretch()
 
-        settings_layout.addWidget(delay_group, 4)
+        settings_layout.addWidget(delay_group, 5) # Changed from 4 to 5 to match speed_group
         main_layout.addLayout(settings_layout)
 
         # 5. Countdown & Execution Controls
@@ -261,15 +267,15 @@ class AutoTyperUI:
         # Action Buttons
         window.start_btn = QPushButton("▶ Start AutoTyping", dashboard_page)
         window.start_btn.setObjectName("primary_action")
-        window.start_btn.setMinimumHeight(40)
+        window.start_btn.setMinimumHeight(45)
         window.start_btn.setToolTip("Begin typing the text (Ctrl+T)")
         window.start_btn.setAccessibleName("Start Auto Typing")
         window.start_btn.setAccessibleDescription("Begins typing the text from the editor using the configured speed and mode")
 
         window.stop_btn = QPushButton("■ Stop / Cancel", dashboard_page)
         window.stop_btn.setObjectName("danger_action")
-        window.stop_btn.setMinimumHeight(40)
-        window.stop_btn.setToolTip("Stop typing immediately (Global ESC)")
+        window.stop_btn.setMinimumHeight(45)
+        window.stop_btn.setToolTip("Stop typing immediately (Double ESC)")
         window.stop_btn.setAccessibleName("Stop Auto Typing")
         window.stop_btn.setAccessibleDescription("Immediately stops the active typing process")
         window.stop_btn.setMinimumWidth(150)
@@ -313,10 +319,11 @@ class AutoTyperUI:
         instr_content = QTextBrowser(scroll_area)
         instr_content.setOpenExternalLinks(True)
         instr_content.setStyleSheet(
-            "QTextBrowser { border: none; background: transparent; font-size: 14px; padding: 10px; }"
+            "QTextBrowser { border: none; background: transparent; font-size: 14px; padding: 10px; font-family: 'Segoe UI', sans-serif; }"
         )
         instr_content.setHtml(
-            "<h1 style='color: #b58900;'>📖 How to Use AutoTyper</h1>"
+            "<h1 style='color: #0ea5e9;'>📖 Instructions</h1>"
+            "<p><b>Welcome to AutoTyper v1.1.</b> Follow these steps to use the application:</p>"
             "<hr style='border: 1px solid #586e75;'>"
 
             "<h2>Step 1 — Load Your Text</h2>"
@@ -376,8 +383,8 @@ class AutoTyperUI:
 
             "<hr style='border: 1px solid #586e75;'>"
             "<p style='text-align: center;'>"
-            "<i>AutoTyper by <b>The IoT Labs</b> — "
-            "<a href='https://theiotlabs.in/' style='color: #b58900;'>theiotlabs.in</a></i></p>"
+            "<i>For updates, bugs, or feature requests, please contact us at "
+            "<a href='https://theiotlabs.in/' style='color: #0ea5e9;'>theiotlabs.in</a></i></p>"
         )
 
         scroll_area.setWidget(instr_content)
@@ -395,7 +402,7 @@ class AutoTyperUI:
 
         # Back button header
         help_header = QHBoxLayout()
-        window.help_back_btn = QPushButton("← Back to Dashboard", help_page)
+        window.help_back_btn = QPushButton("← Back", help_page)
         window.help_back_btn.setObjectName("back_btn")
         window.help_back_btn.setMinimumHeight(36)
         window.help_back_btn.setMinimumWidth(180)
@@ -411,13 +418,11 @@ class AutoTyperUI:
         help_content = QTextBrowser(help_scroll)
         help_content.setOpenExternalLinks(True)
         help_content.setStyleSheet(
-            "QTextBrowser { border: none; background: transparent; font-size: 14px; padding: 10px; }"
+            "QTextBrowser { border: none; background: transparent; font-size: 14px; padding: 10px; font-family: 'Segoe UI', sans-serif; }"
         )
         help_content.setHtml(
-            "<h1 style='color: #b58900;'>❓ About AutoTyper</h1>"
-            "<hr style='border: 1px solid #586e75;'>"
-
-            "<h2>AutoTyper v1.0.0</h2>"
+            "<h1 style='color: #0ea5e9;'>❓ About AutoTyper</h1>"
+            "<p><b>AutoTyper Community Edition</b> is designed to automate typing tasks with precision and flexibility.</p>"
             "<p><b>Developed by:</b> The IoT Labs</p>"
             "<p>AutoTyper is a professional, secure, and formatting-accurate "
             "Windows keyboard simulation utility.</p>"
@@ -467,12 +472,12 @@ class AutoTyperUI:
             "<h2>🏢 About The IoT Labs</h2>"
             "<p>The IoT Labs is a technology company focused on building practical, "
             "reliable, and user-friendly desktop and IoT solutions.</p>"
-            "<p>Visit us: <a href='https://theiotlabs.in/' style='color: #b58900;'>theiotlabs.in</a></p>"
+            "<p>Visit us: <a href='https://theiotlabs.in/' style='color: #0ea5e9;'>theiotlabs.in</a></p>"
 
             "<hr style='border: 1px solid #586e75;'>"
             "<p style='text-align: center;'>"
             "<i>Copyright © 2026 The IoT Labs. All rights reserved.</i></p>"
-            "<p style='text-align: center; font-size: 12px; color: #586e75;'>Version 1.0.0 (Gold Master)</p>"
+            "<p style='text-align: center; font-size: 12px; color: #586e75;'>Version 1.1.0 (Gold Master)</p>"
         )
 
         help_scroll.setWidget(help_content)

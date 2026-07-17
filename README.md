@@ -12,7 +12,7 @@ An automated keyboard typing simulation utility designed and developed by **The 
 * **File Favorites (v1.1)**: Star (⭐) important files to pin them at the top of the Recent Files dropdown.
 * **Settings Manager (v1.1)**: Dedicated UI to configure Auto-Save, Startup Profile, Session Restore, and Export/Import config backups.
 * **Background Threading**: Keystroke emulation runs on a separate worker thread (`QThread`), keeping the GUI responsive and letting you abort instantly.
-* **Emergency Stop**: Press the global **`ESC`** key at any point to stop typing immediately, even if the application is not currently focused.
+* **Emergency Stop**: Press the global **`ESC`** key twice rapidly (Double ESC) at any point to stop typing immediately, even if the application is not currently focused.
 * **Document File Loader**: Load and parse text directly from Plain Text (`.txt`), Markdown (`.md`), and Microsoft Word (`.docx` via `python-docx`) files.
 * **Keyboard Shortcuts**: Mapped shortcuts (Ctrl+O, Ctrl+T, Ctrl+W, F1, Ctrl+Q, Ctrl+F) for power users.
 * **Document Drag & Drop**: Drag `.txt`, `.md`, or `.docx` files directly onto the app window to import them instantly.
@@ -23,7 +23,7 @@ An automated keyboard typing simulation utility designed and developed by **The 
   * **Normal Mode**: Consistent, uniform typing speed.
   * **Human Mode**: Introduces natural micro-pauses between letters and longer delays after punctuation (`.`, `,`, `!`, `?`, etc.) and newlines.
 * **Optional Random Delay**: Enable random delays with customizable minimum and maximum delay limits (in milliseconds).
-* **Dark / Light Modes**: A modern, sleek user interface with support for Windows 11 style rounded corners and high-contrast styling.
+* **Dark / Light Modes**: Features an ultra-modern Windows 11 Fluent 'Zinc' Dark Theme with Sky Blue focus accents and flattened card layouts.
 
 ---
 
@@ -56,17 +56,9 @@ AutoTyper Project/
 │   └── clipboard.py        # System clipboard interface
 │
 ├── docs/                   # Quality Control and Release Documentation
-│   ├── ARCHITECTURE_GUIDE.md # Architectural overview and class diagrams
-│   ├── BUILD_INSTRUCTIONS.md # Step-by-step PyInstaller compilation guide
-│   ├── DEVELOPER_GUIDE.md    # API documentation and testing conventions
-│   ├── INSTALLER_GUIDE.md    # SmartScreen warnings and packaging details
-│   ├── RELEASE_CHECKLIST.md  # Final Release QA Verification Checklist
-│   ├── GITHUB_RELEASE_NOTES.md # Releases details template
-│   ├── QC_REPORT.md        # Final Quality Control audit report
-│   ├── CHANGELOG.md        # Change log details for Version 1.0
-│   ├── RELEASE_NOTES.md    # Release notes & instructions
-│   ├── KNOWN_ISSUES.md     # Environmental constraints & workarounds
-│   └── TEST_REPORT.md      # Automated testing suite log
+│   ├── CHANGELOG.md        # Consolidated v1.1 Change log and feature updates
+│   ├── DEVELOPER_GUIDE.md  # Core components documentation and API conventions
+│   └── QC_REPORT.md        # Final Quality Control audit report
 │
 ├── LICENSE                 # MIT License file
 ├── SECURITY.md             # Security disclosures policy
@@ -153,19 +145,9 @@ python test_core.py
 ## 📚 Quality Control and Release Documentation
 
 More details about the release can be found in the **[docs/](file:///d:/IoT%20Labs/AutoTyper%20Project/docs)** folder:
-* **[docs/QC_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/QC_REPORT.md)**: Product Quality Control audit details and readiness score.
-* **[docs/CHANGELOG.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/CHANGELOG.md)**: Version history, additions, changes, and removals.
-* **[docs/RELEASE_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/RELEASE_REPORT.md)**: Final pre-release audit, verification, and code sign parameters.
-* **[docs/RELEASE_NOTES.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/RELEASE_NOTES.md)**: Target users, features, and deployment parameters.
-* **[docs/KNOWN_ISSUES.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/KNOWN_ISSUES.md)**: Workarounds for auto-indentation and admin privileges.
-* **[docs/TEST_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/TEST_REPORT.md)**: Expanded unit test suite results.
-* **[docs/RELEASE_CHECKLIST.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/RELEASE_CHECKLIST.md)**: Quality Assurance verification checklist.
-* **[docs/BUILD_INSTRUCTIONS.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/BUILD_INSTRUCTIONS.md)**: PyInstaller compilation steps.
+* **[docs/CHANGELOG.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/CHANGELOG.md)**: Version history, additions, changes, and removals for v1.1.
 * **[docs/DEVELOPER_GUIDE.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/DEVELOPER_GUIDE.md)**: Core components documentation and design styles.
-* **[docs/ARCHITECTURE_GUIDE.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/ARCHITECTURE_GUIDE.md)**: Class maps, threading synchronization, and crash prevention structures.
-* **[docs/INSTALLER_GUIDE.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/INSTALLER_GUIDE.md)**: Windows SmartScreen workarounds, executable signing details, and Inno Setup integration.
-* **[docs/GITHUB_RELEASE_NOTES.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/GITHUB_RELEASE_NOTES.md)**: Release tags summary.
-* **[docs/UI_UX_DESIGN_PROPOSAL.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/UI_UX_DESIGN_PROPOSAL.md)**: Design philosophy, visual tokens, and interface guides.
+* **[docs/QC_REPORT.md](file:///d:/IoT%20Labs/AutoTyper%20Project/docs/QC_REPORT.md)**: Product Quality Control audit details and readiness score.
 
 ---
 

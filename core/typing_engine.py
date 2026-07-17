@@ -201,11 +201,18 @@ class TypingWorker(QThread):
 
     def _start_esc_listener(self) -> None:
         """Starts the global key listener for the ESC emergency stop key."""
+        last_esc_time = [0.0]
+        
         def on_press(key):
             if key == keyboard.Key.esc:
-                logger.info("Global ESC key detected. Triggering emergency stop.")
-                self.stop()
-                return False  # Stops the keyboard listener thread
+                current_time = time.time()
+                if current_time - last_esc_time[0] <= 1.0:
+                    logger.info("Double ESC key detected. Triggering emergency stop.")
+                    self.stop()
+                    return False  # Stops the keyboard listener thread
+                else:
+                    logger.debug("First ESC key detected. Waiting for second press...")
+                    last_esc_time[0] = current_time
 
         try:
             self._listener = keyboard.Listener(on_press=on_press)

@@ -28,9 +28,6 @@ class CodeEditor(QPlainTextEdit):
         self.update_line_number_area_width(0)
         self.highlight_current_line()
         
-        # Apply standard monospace font settings here or via external stylesheet
-        self.setStyleSheet("background-color: transparent;") 
-
     def line_number_area_width(self) -> int:
         digits = 1
         max_blocks = max(1, self.blockCount())
@@ -65,8 +62,8 @@ class CodeEditor(QPlainTextEdit):
         if not self.isReadOnly():
             from PySide6.QtWidgets import QTextEdit
             selection = QTextEdit.ExtraSelection()
-            # Theme color for highlighting line: subtle dark overlay (adjust for Solarized Slate later if needed)
-            line_color = QColor(0, 0, 0, 15) 
+            # Fluent Theme: Zinc 800 for current line
+            line_color = QColor("#27272a") 
             selection.format.setBackground(line_color)
             selection.format.setProperty(QTextFormat.FullWidthSelection, True)
             selection.cursor = self.textCursor()
@@ -77,8 +74,8 @@ class CodeEditor(QPlainTextEdit):
 
     def line_number_area_paint_event(self, event):
         painter = QPainter(self.line_number_area)
-        # Solarized Slate panel background
-        painter.fillRect(event.rect(), QColor("#1e2b34"))
+        # Fluent Theme: Zinc 950 for gutter background (matches editor)
+        painter.fillRect(event.rect(), QColor("#09090b"))
 
         block = self.firstVisibleBlock()
         block_number = block.blockNumber()
@@ -88,8 +85,8 @@ class CodeEditor(QPlainTextEdit):
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(block_number + 1)
-                # Text color for line numbers
-                painter.setPen(QColor("#5a7a8c")) 
+                # Fluent Theme: Zinc 500 for line numbers
+                painter.setPen(QColor("#71717a")) 
                 painter.drawText(0, top, self.line_number_area.width() - 2, 
                                self.fontMetrics().height(),
                                Qt.AlignRight | Qt.AlignVCenter, number)

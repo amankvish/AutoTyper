@@ -34,8 +34,11 @@ def main() -> None:
     # Load global stylesheet
     style_path = os.path.join(os.path.dirname(__file__), "app", "style.qss")
     if os.path.exists(style_path):
+        logger.info(f"Loading stylesheet from: {style_path}")
         with open(style_path, "r", encoding="utf-8") as f:
             app.setStyleSheet(f.read())
+    else:
+        logger.error(f"Stylesheet not found at: {style_path}")
 
     # 3. Initialize Splash Screen
     splash_path = config.get_resource_path("autotyper_splash.png")

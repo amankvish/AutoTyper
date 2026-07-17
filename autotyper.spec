@@ -7,13 +7,14 @@ a = Analysis(
     datas=[
         ('resources/autotyper_splash.png', '.'),
         ('resources/autotyper_icon.png', '.'),
-        ('resources/autotyper_icon.ico', '.')
+        ('resources/autotyper_icon.ico', '.'),
+        ('app/style.qss', 'app')
     ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['PyQt5', 'PyQt6', 'PySide2'],
     noarchive=False,
     optimize=0,
 )

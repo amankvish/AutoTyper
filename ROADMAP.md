@@ -4,20 +4,16 @@ AutoTyper by **The IoT Labs** is designed as a lightweight, safe, and offline-fi
 
 ---
 
-## 🌟 Version 1.0 (Gold Master Release) - Current
-* Monospaced text box styled after Windows 11 Fluent UI, preserving tabs and spacing.
-* Support for `.txt`, `.md`, and `.docx` document imports with multi-encoding fallbacks.
-* Windows native layout-independent `SendInput` Unicode typing.
-* Simulation modes: Normal (uniform WPM) and Human (organic delay variation + punctuation pauses).
-* Live character, word, and line count statistics.
-* Estimated total duration and dynamic remaining typing countdown.
-* Last session auto-restoration and autosave crash prevention.
-* Recent files history dropdown menu.
-* 100% offline configuration storage.
+## 🌟 Version 1.1 (Quality of Life Release) - Current
+* **Windows 11 Zinc Theme**: Sleek, borderless dark mode interface with Sky Blue accent rings.
+* **Typing Profiles**: Switch between Built-in Profiles (Normal, Fast, Slow, Human) or custom.
+* **Enhanced Editor**: Find/Replace toolbar, line numbers, word wrap, and 16px Consolas font.
+* **File Favorites**: Star (⭐) important files to pin them at the top of the Recent Files dropdown.
+* **Settings Manager**: Dedicated UI to configure Auto-Save, Startup Profile, Session Restore.
 
 ---
 
-## 🚀 Version 1.1 (Planned)
+## 🚀 Version 1.2 (Planned)
 * **Custom Punctuation Pause Schedulers**: Allow power-users to customize punctuation sleep multipliers inside the settings panel.
 * **Auto-Indent Safety Toggles**: Introduce an option inside settings that dynamically inserts backspaces after enters to counteract IDE auto-indent behaviors automatically.
 * **Pause/Resume Trigger Key**: Enable pausing and resuming the typing process dynamically via a global hotkey (e.g. `Pause` or `F8`), maintaining the same QThread worker lifecycle.

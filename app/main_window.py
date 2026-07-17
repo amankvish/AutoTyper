@@ -83,6 +83,7 @@ class MainWindow(QMainWindow):
         self.replace_btn.clicked.connect(self.handle_replace)
         self.replace_all_btn.clicked.connect(self.handle_replace_all)
         self.close_find_btn.clicked.connect(self.find_replace_widget.hide)
+        self.toggle_find_btn.clicked.connect(self.toggle_find_replace)
 
         # Editor text changed (for auto save, stats counter, and typing time)
         self.editor.textChanged.connect(self.handle_text_changed)
@@ -229,7 +230,6 @@ class MainWindow(QMainWindow):
 
     def apply_theme(self, theme: str) -> None:
         """Applies stylesheet styling to the window."""
-        self.setStyleSheet(config.DARK_THEME)
         self.settings.set("theme", "dark")
 
     # ==========================================

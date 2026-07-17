@@ -1,0 +1,6 @@
+def my_function():
+    print("This is level 1 indentation")
+    if True:
+        print("This is level 2 indentation")
+        # Let's see if spaces are preserved!
+    return True
