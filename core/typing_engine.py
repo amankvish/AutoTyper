@@ -167,12 +167,29 @@ class TypingWorker(QThread):
                 # Safe keystroke execution
                 if char == '\n':
                     pyautogui.press('enter')
+                    # Bug fix: Give the target app time to process Enter
+                    # (prevents line breaks from being swallowed)
+                    time.sleep(0.02)
                 elif char == '\t':
                     pyautogui.press('tab')
+                    time.sleep(0.01)
                 else:
                     # Attempt Windows SendInput first for layout-independent Unicode typing
                     if not send_unicode_char(char):
-                        pyautogui.typewrite(char)
+                        # Fallback: use write() instead of typewrite() to support non-ASCII
+                        try:
+                            pyautogui.write(char)
+                        except Exception:
+                            logger.warning(f"Failed to type character: {repr(char)}")
+                    else:
+                        # Bug fix: Give the OS input queue time to process the SendInput event
+                        # This prevents dropped characters at high WPM speeds
+                        time.sleep(0.005)
+                    
+                    # Bug fix: Indentation guard — consecutive spaces need micro-delays
+                    # to prevent the Windows input queue from merging/dropping them
+                    if char == ' ' and idx + 1 < total_chars and self.text[idx + 1] == ' ':
+                        time.sleep(0.008)
 
                 remaining_chars = total_chars - (idx + 1)
                 remaining_sec = int((12 * remaining_chars) / self.wpm) if self.wpm > 0 else 0
